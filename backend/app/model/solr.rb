@@ -227,6 +227,8 @@ class Solr
       if @show_published_only
         add_solr_param(:fq, "publish:true")
         add_solr_param(:fq, "types:pui")
+      else
+        add_solr_param(:qf, "fullrecord")
       end
 
 
@@ -248,21 +250,8 @@ class Solr
         add_solr_param(:"facet.mincount", @facet_mincount)
       end
 
-      add_solr_param(:"q.op", "AND")
-      add_solr_param(:"mm", "6<-1 6<90%")
-
       if @query_type == :edismax
         add_solr_param(:defType, "edismax")
-        add_solr_param(:pf, "four_part_id^50")
-        add_solr_param(:qf, "title^25")
-        add_solr_param(:qf, "four_part_id^50")
-        add_solr_param(:qf, "fullrecord")
-        add_solr_param(:bq, "primary_type:resource^100")
-        add_solr_param(:bq, "primary_type:accession^100")
-        add_solr_param(:bq, "primary_type:subject^50")
-        add_solr_param(:bq, "primary_type:agent_person^50")
-        add_solr_param(:bq, "primary_type:agent_corporate_entity^30")
-        add_solr_param(:bq, "primary_type:agent_family^30")
       end
 
       # do it here so instance variables can be resolved
