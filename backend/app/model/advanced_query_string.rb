@@ -9,6 +9,8 @@ class AdvancedQueryString
   def to_solr_s
     return empty_solr_s if empty_search?
 
+    return value if field == "fullrecord"
+
     "#{prefix}#{field}:#{value}"
   end
 
@@ -68,7 +70,7 @@ class AdvancedQueryString
     elsif @query["jsonmodel_type"] == "range_query"
       false
     else
-      raise "Unknown field query type: #{@query["jsonmodel_type"]}" 
+      raise "Unknown field query type: #{@query["jsonmodel_type"]}"
     end
   end
 
