@@ -359,7 +359,6 @@
        <int name="rows">10</int>
        <str name="q.op">AND</str>
        <str name="mm">6&lt;-1 6&lt;90%</str>
-       <str name="df">fullrecord</str>
        <str name="pf">four_part_id^50</str>
        <str name="qf">four_part_id^50 title^25 finding_aid_title^25 notes summary agents subjects</str>
        <str name="bq">primary_type:resource^100 primary_type:accession^100 primary_type:subject^50 primary_type:agent_person^50 primary_type:agent_corporate_entity^30 primary_type:agent_family^30</str>
