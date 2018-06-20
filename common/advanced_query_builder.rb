@@ -12,6 +12,8 @@ class AdvancedQueryBuilder
   def and(field_or_subquery, value = nil, type = 'text', literal = false, negated = false)
     if field_or_subquery.is_a?(AdvancedQueryBuilder)
       push_subquery('AND', field_or_subquery)
+    elsif value.is_a? RangeValue
+      push_range('AND', field_or_subquery, value, 'range', literal, negated)
     else
       raise "Missing value" if value.nil?
       push_term('AND', field_or_subquery, value, type, literal, negated)
@@ -23,6 +25,8 @@ class AdvancedQueryBuilder
   def or(field_or_subquery, value = nil, type = 'text', literal = false, negated = false)
     if field_or_subquery.is_a?(AdvancedQueryBuilder)
       push_subquery('OR', field_or_subquery)
+    elsif value.is_a? RangeValue
+      push_range('AND', field_or_subquery, value, 'range', literal, negated)
     else
       raise "Missing value" unless value
       push_term('OR', field_or_subquery, value, type, literal, negated)
@@ -95,6 +99,25 @@ class AdvancedQueryBuilder
       'arg1' => {
         'field' => field,
         'value' => value,
+        'type' => type,
+        'negated' => negated,
+        'literal' => literal,
+      },
+      'arg2' => @query,
+    }
+
+    @query = new_query
+  end
+
+
+  def push_range(operator, field, range, type = 'range', literal = false, negated = false)
+    new_query = {
+      'operator' => operator,
+      'type' => 'boolean_query',
+      'arg1' => {
+        'field' => field,
+        'from' => range.from,
+        'to' => range.to,
         'type' => type,
         'negated' => negated,
         'literal' => literal,
