@@ -217,6 +217,14 @@ class Solr
       @writer_type
     end
 
+    def pui_qf
+      "four_part_id^50 title^25 finding_aid_title^25 notes summary agents subjects access_restrictions_note content_description general_note inventory provenance use_restrictions_note"
+    end
+
+    def staff_ui_qf
+      "four_part_id^50 title^25 finding_aid_filing_title^25 fullrecord"
+    end
+
     def to_solr_url
       raise "Missing pagination settings" unless @pagination
 
@@ -227,8 +235,21 @@ class Solr
       if @show_published_only
         add_solr_param(:fq, "publish:true")
         add_solr_param(:fq, "types:pui")
+        if AppConfig[:solr_params].any?
+          if !AppConfig[:solr_params].has_key? :qf
+            add_solr_param(:qf, pui_qf)
+          end
+        else
+          add_solr_param(:qf, pui_qf)
+        end
       else
-        add_solr_param(:qf, "fullrecord")
+        if AppConfig[:solr_params].any?
+          if !AppConfig[:solr_params].has_key? :qf
+            add_solr_param(:qf, staff_ui_qf)
+          end
+        else
+          add_solr_param(:qf, staff_ui_qf)
+        end
       end
 
 
@@ -252,6 +273,25 @@ class Solr
 
       if @query_type == :edismax
         add_solr_param(:defType, "edismax")
+        if AppConfig[:solr_params].any?
+          if !AppConfig[:solr_params].has_key? :"q.op"
+            add_solr_param(:"q.op", "AND")
+          end
+          if !AppConfig[:solr_params].has_key? :mm
+            add_solr_param(:mm, "6<-1 6<90%")
+          end
+          if !AppConfig[:solr_params].has_key? :pf
+            add_solr_param(:pf, "four_part_id^50")
+          end
+          if !AppConfig[:solr_params].has_key? :bq
+            add_solr_param(:bq, "primary_type:resource^100 primary_type:accession^100 primary_type:subject^50 primary_type:agent_person^50 primary_type:agent_corporate_entity^30 primary_type:agent_family^30")
+          end
+        else
+          add_solr_param(:"q.op", "AND")
+          add_solr_param(:mm, "6<-1 6<90%")
+          add_solr_param(:pf, "four_part_id^50")
+          add_solr_param(:bq, "primary_type:resource^100 primary_type:accession^100 primary_type:subject^50 primary_type:agent_person^50 primary_type:agent_corporate_entity^30 primary_type:agent_family^30")
+        end
       end
 
       # do it here so instance variables can be resolved
@@ -272,7 +312,6 @@ class Solr
                                        [:start, (@pagination[:page] - 1) * @pagination[:page_size]],
                                        [:rows, @pagination[:page_size]]] +
                                       @solr_params)
-
       url
     end
 
