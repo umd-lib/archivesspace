@@ -54,9 +54,9 @@ class AdvancedQueryString
     elsif @query["jsonmodel_type"] == "range_query"
       "[#{@query["from"] || '*'} TO #{@query["to"] || '*'}]"
     elsif @query["jsonmodel_type"] == "field_query" && (use_literal? || @query["literal"])
-      "(\"#{solr_escape(@query['value'])}\")"
+      "\"#{solr_escape(@query['value'])}\""
     else
-      "(#{replace_reserved_chars(@query['value'].to_s)})"
+      "#{replace_reserved_chars(@query['value'].to_s)}"
     end
   end
 
