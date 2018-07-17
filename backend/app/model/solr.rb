@@ -234,7 +234,6 @@ class Solr
 
       if @show_published_only
         add_solr_param(:fq, "publish:true")
-        # add_solr_param(:fq, "types:pui")
         if AppConfig[:solr_params].any?
           if !AppConfig[:solr_params].has_key? :qf
             add_solr_param(:qf, pui_qf)
@@ -308,6 +307,7 @@ class Solr
                                        [:start, (@pagination[:page] - 1) * @pagination[:page_size]],
                                        [:rows, @pagination[:page_size]]] +
                                       @solr_params)
+      puts "to_solr_url url #{url.inspect}"
       url
     end
 

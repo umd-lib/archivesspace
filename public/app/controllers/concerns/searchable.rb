@@ -153,8 +153,8 @@ module Searchable
 
       advanced_query_builder.and(this_repo)
     end
-
-    # advanced_query_builder.and('types', 'pui')
+    advanced_query_builder.and('types', 'pui')
+    advanced_query_builder.and('publish', true)
 
     @base_search += "&limit=#{@search[:limit]}" unless @search[:limit].blank?
 
@@ -166,9 +166,7 @@ module Searchable
       b.or('types', type)
     }
 
-    @criteria['types'] = "pui"
     @criteria['aq'] = advanced_query_builder.build.to_json
-    puts "LANEY criteria #{@criteria['aq'].inspect}"
     @criteria['filter'] = @facet_filter.get_filter_query.and(type_query_builder).build.to_json
     @criteria['facet[]'] = @facet_filter.get_facet_types
     @criteria['page_size'] = params.fetch(:page_size, AppConfig[:pui_search_results_page_size])
