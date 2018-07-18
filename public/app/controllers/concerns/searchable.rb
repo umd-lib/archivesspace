@@ -153,8 +153,8 @@ module Searchable
 
       advanced_query_builder.and(this_repo)
     end
-    advanced_query_builder.and('types', 'pui')
-    advanced_query_builder.and('publish', true)
+    # advanced_query_builder.and('types', 'pui*')
+    # advanced_query_builder.and('publish', true)
 
     @base_search += "&limit=#{@search[:limit]}" unless @search[:limit].blank?
 
