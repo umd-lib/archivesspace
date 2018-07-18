@@ -234,6 +234,7 @@ class Solr
 
       if @show_published_only
         add_solr_param(:fq, "publish:true")
+        add_solr_param(:fq, "types:pui")
         if AppConfig[:solr_params].any?
           if !AppConfig[:solr_params].has_key? :qf
             add_solr_param(:qf, pui_qf)
