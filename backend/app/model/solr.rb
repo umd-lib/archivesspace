@@ -276,15 +276,11 @@ class Solr
           if !AppConfig[:solr_params].has_key? :mm
             add_solr_param(:mm, "6<-1 6<90%")
           end
-          if !AppConfig[:solr_params].has_key? :pf
-            add_solr_param(:pf, "four_part_id^50")
-          end
           if !AppConfig[:solr_params].has_key? :bq
             add_solr_param(:bq, "primary_type:resource^100 primary_type:accession^100 primary_type:subject^50 primary_type:agent_person^50 primary_type:agent_corporate_entity^30 primary_type:agent_family^30")
           end
         else
           add_solr_param(:mm, "6<-1 6<90%")
-          add_solr_param(:pf, "four_part_id^50")
           add_solr_param(:bq, "primary_type:resource^100 primary_type:accession^100 primary_type:subject^50 primary_type:agent_person^50 primary_type:agent_corporate_entity^30 primary_type:agent_family^30")
         end
       end
