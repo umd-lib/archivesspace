@@ -2,10 +2,13 @@ require 'spec_helper'
 require 'rails_helper'
 
 describe 'Resources', js: true do
-  it 'should be able to see all published resources in a repository' do
+  before(:each) do
     visit('/')
     click_link 'Collections'
     expect(current_path).to eq ('/repositories/resources')
+    finished_all_ajax_requests?
+  end
+  it 'should be able to see all published resources in a repository' do
     within all('.col-sm-12')[0] do
       expect(page).to have_content("Showing Collections: 1 - 3 of 3")
     end
@@ -15,9 +18,6 @@ describe 'Resources', js: true do
   end
 
   it 'should be able to properly navigate from Collection Organization back to Resource' do
-    visit('/')
-    click_link 'Collections'
-    expect(current_path).to eq ('/repositories/resources')
     first_title = ''
     first_href = ''
     within all('.col-sm-12')[1] do
