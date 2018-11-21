@@ -46,6 +46,7 @@ gem 'clipboard-rails'
 
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
+gem "rack", ">= 2.0.6"
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # FIXME? gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
