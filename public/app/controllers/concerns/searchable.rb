@@ -9,7 +9,7 @@ module Searchable
   class NoResultsError < StandardError; end
 
 
-  def set_up_search(default_types = [],default_facets=[],default_search_opts={}, params={}, q='')
+  def set_up_search(default_types = [],default_facets=[],default_opts={}, params={}, q='')
     @search = Search.new(params)
     limit = params.fetch(:limit,'')
     field = params.fetch(:field, nil)
@@ -29,10 +29,11 @@ module Searchable
       @query = q
       @base_search = "#{@base_search}q=#{q}"
     else
-      pq = params.fetch(:q, '*').strip
+      pq = params.fetch(:q, '*')
+      pq.strip if pq.is_a? String
       pq = '*' if pq.blank?
       @query += "#{field}:" if !field.blank?
-      @query += pq
+      @query += pq[0] if pq.is_a? Array
       @base_search = "#{@base_search}q=#{@query}"
     end
     res_id = params.fetch(:res_id, '')
@@ -53,7 +54,7 @@ module Searchable
     end
     @base_search += "&limit=#{limit}" if !limit.blank?
 #    Rails.logger.debug("SEARCHABLE BASE: #{@base_search}")
-    @criteria = default_search_opts
+    @criteria = default_opts
     @facet_filter = FacetFilter.new(default_facets, params.fetch(:filter_fields,[]), params.fetch(:filter_values,[]))
     # building the query for the facetting
     type_query_builder = AdvancedQueryBuilder.new
@@ -65,8 +66,8 @@ module Searchable
     @criteria['page_size'] = params.fetch(:page_size, AppConfig[:pui_search_results_page_size])
   end
 
-  def set_up_and_run_search(default_types = [],default_facets=[],default_search_opts={}, params={})
-    set_up_advanced_search(default_types, default_facets, default_search_opts, params)
+  def set_up_and_run_search(default_types = [],default_facets=[],default_opts={}, params={})
+    set_up_advanced_search(default_types, default_facets, default_opts, params)
     page = Integer(params.fetch(:page, "1"))
     @results =  archivesspace.advanced_search('/search', page, @criteria)
     if @results['total_hits'].blank? ||  @results['total_hits'] == 0
@@ -76,14 +77,14 @@ module Searchable
     end
   end
 
-  def set_up_advanced_search(default_types = [],default_facets=[],default_search_opts={}, params={})
+  def set_up_advanced_search(default_types = [],default_facets=[],default_opts={}, params={})
     @search = Search.new(params)
     unless @search[:limit].blank?
       default_types = @search[:limit].split(",")
     end
     set_search_statement
     raise I18n.t('navbar.error_no_term') unless @search.has_query?
-    queries = @search[:q]
+
     have_query = false
     advanced_query_builder = AdvancedQueryBuilder.new
     @search[:q].each_with_index { |query, i|
@@ -128,7 +129,7 @@ module Searchable
       advanced_query_builder.and(builder)
 #      @base_search += "&filter_from_year=#{@search[:filter_from_year]}&filter_to_year=#{@search[:filter_to_year]}"
     end
-    @criteria = default_search_opts
+    @criteria = default_opts
     @criteria['sort'] = @search[:sort] if @search[:sort]  # sort can be passed as default or via params
     # we have to pass the sort along in the URL
     @sort =  @criteria['sort']
@@ -153,7 +154,7 @@ module Searchable
       advanced_query_builder.and(this_repo)
     end
     advanced_query_builder.and('types', 'pui')
-    advanced_query_builder.and('publish', true)
+    # advanced_query_builder.and('publish', true)
     @base_search += "&limit=#{@search[:limit]}" unless @search[:limit].blank?
 
     @facet_filter = FacetFilter.new(default_facets, @search[:filter_fields],  @search[:filter_values])
