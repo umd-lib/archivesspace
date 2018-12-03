@@ -29,8 +29,8 @@ class Search
       highlighting(params[:hl]).
       set_writer_type( params[:dt] || "json" )
 
-      query.set_sort(params[:sort]) if params.key?(:sort)
-      query.remove_csv_header if ( params[:dt] == "csv" and params[:no_csv_header] )
+    query.set_sort(params[:sort]) if params.key?(:sort)
+    query.remove_csv_header if ( params[:dt] == "csv" and params[:no_csv_header] )
 
     results = Solr.search(query)
 

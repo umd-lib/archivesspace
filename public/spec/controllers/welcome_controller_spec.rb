@@ -1,14 +1,10 @@
 require 'spec_helper'
 
-
 describe WelcomeController, type: :controller do
-
   before (:each) do
     get :show
   end
-
   render_views # to check for partials being rendered
-  
   it "should welcome all visitors" do
     expect(response).to have_http_status(200)
     expect(response).to render_template :show
@@ -22,5 +18,4 @@ describe WelcomeController, type: :controller do
     expect(response).to render_template(partial: 'shared/_navigation')
     expect(response).to render_template(partial: 'shared/_footer')
   end
-
 end

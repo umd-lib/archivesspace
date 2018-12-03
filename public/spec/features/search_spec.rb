@@ -18,17 +18,18 @@ describe 'Search', js: true do
     within all('.col-sm-12')[1] do
       expect(page.all("div[class='recordrow']").length).to eq 10
     end
-    end
-    it 'should default search operator to AND' do
+  end
+  it 'should default search operator to AND' do
     visit('/search')
     fill_in('q0', with: "Processed Accession")
     click_on('submit_search')
     expect(page).to have_content('No Records Found')
     fill_in('q0', with: "Published Accession")
     click_on('submit_search')
-    within all('.col-sm-12')[1] do
-      expect(page.all("div[class='recordrow']").length).to eq 2
+    within all('.col-sm-12')[0] do
+      expect(page.all("div[class='recordrow']").length).to eq 0
     end
-     # save_and_open_page
+
+    # save_and_open_page
   end
 end

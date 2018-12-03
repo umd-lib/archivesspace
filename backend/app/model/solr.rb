@@ -241,7 +241,7 @@ class Solr
         else
           add_solr_param(:qf, pui_qf)
         end
-        else
+      else
         if AppConfig[:solr_params].any?
           if !AppConfig[:solr_params].has_key? :qf
             add_solr_param(:qf, staff_ui_qf)
@@ -303,7 +303,7 @@ class Solr
                                        [:start, (@pagination[:page] - 1) * @pagination[:page_size]],
                                        [:rows, @pagination[:page_size]]] +
                                       @solr_params)
-
+      puts "to_solr_url url #{url.inspect}"
       url
     end
 
@@ -322,6 +322,8 @@ class Solr
   def self.search(query)
 
     url = query.to_solr_url
+    Log.debug("Solr URL: #{url.inspect}")
+
     Log.debug("Solr URL: #{url.inspect}")
 
     req = Net::HTTP::Post.new(url.path)
